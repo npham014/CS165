@@ -30,17 +30,25 @@ int main(int argc, char** argv) {
 	std::cout << interm0 << std::endl;
 	interm0 += appInt(password, password.length());
 	std::cout << "intermediate0 before hashing: " <<  interm0 << std::endl;
-	std::cout << "intermediate0 after hashing: " << myWrapper->getHashFromString(interm0) << std::endl << std::endl;
-	std::string intermi, intermiprehash;
-	/*for(unsigned int i = 0; i <= 999; i++) // intermediate1000 loop, incomplete
-	{
+	interm0 = myWrapper->getHashFromString(interm0);
+	std::cout << "intermediate0 after hashing: " << interm0 << std::endl << std::endl;
+	std::string intermi;
+	intermi = interm0;
+	for(unsigned long int i = 0; i <= 999; i++) // intermediate1000 loop, incomplete
+	{	
+		std::string intermiprehash;
 		if(i%2) intermiprehash += password;
-		else 
-		{
-			if(i == 0)
-			
-		}
-	}*/
+		else intermiprehash += intermi;
+		if(i%3) intermiprehash += salt;
+		if(i%7) intermiprehash += password;
+		if(i%2) intermiprehash += intermi;
+		else intermiprehash += password;
+		intermi = myWrapper->getHashFromString(intermiprehash);
+		/*std::cout << intermi << std::endl;*/
+		//if(!(i%998)) std::cout << "intermediate" << i+1 << ": " << intermi << '\n' << "intermiprehash: " << intermiprehash << std::endl;
+	}
+	std::cout << "intermediate1000: " << intermi << std::endl;
+	//std::cout << myWrapper->getHashFromString(intermi) << std::endl;
 	delete myWrapper;
 
 	return 0;
