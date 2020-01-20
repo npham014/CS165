@@ -35,20 +35,26 @@ int main(int argc, char** argv) {
 	std::string intermi;
 	intermi = interm0;
 	for(unsigned long int i = 0; i <= 999; i++) // intermediate1000 loop, incomplete
-	{	
+	{	unsigned long int j = i;
 		std::string intermiprehash;
-		if(i%2) intermiprehash += password;
-		else intermiprehash += intermi;
-		if(i%3) intermiprehash += salt;
-		if(i%7) intermiprehash += password;
-		if(i%2) intermiprehash += intermi;
-		else intermiprehash += password;
+		intermi = convertHash(intermi, 16);
+		intermiprehash += (j%2) == 0 ? intermi : password;
+		if((j%3) > 0) intermiprehash += salt;
+		if((j%7) > 0) intermiprehash += password;
+		intermiprehash += (j%2) == 0 ? password : intermi;
 		intermi = myWrapper->getHashFromString(intermiprehash);
-		/*std::cout << intermi << std::endl;*/
-		//if(!(i%998)) std::cout << "intermediate" << i+1 << ": " << intermi << '\n' << "intermiprehash: " << intermiprehash << std::endl;
+		//if(intermi == ff202f2e9b6ac6e495570536fc89fd2a)
 	}
 	std::cout << "intermediate1000: " << intermi << std::endl;
-	//std::cout << myWrapper->getHashFromString(intermi) << std::endl;
+	std::string s = "";
+	unsigned char x[22] = {0};
+	for(unsigned int i = 0; i < intermi.size(); i++)
+	{
+		unsigned char temp = intermi.at(i);
+		x[i] = temp & 0x3f;
+	}
+	std::string base64 = "./0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+	std::cout << base64.at(x[11]) << base64.at(x[4]) << base64.at(x[10]) << base64.at(x[5]) << base64.at(x[3]) << base64.at(x[9]) << base64.at(x[15]) << base64.at(x[2]) << base64.at(x[8]) << base64.at(x[14]) << base64.at(x[1]) << base64.at(x[7]) << base64.at(x[13]) << base64.at(x[0]) << base64.at(x[6]) << base64.at(x[12]) << std::endl;
 	delete myWrapper;
 
 	return 0;
