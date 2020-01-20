@@ -74,21 +74,27 @@ int main(int argc, char** argv) {
 	unsigned char x[22];
 	unsigned char j = 0;
 	//x[j++] = y.at(y.size()-1) & 0x3f;
-        for(unsigned char i = 15; i > 5; i--)
+        for(unsigned char i = 15; i > 0; i--)
         {
 		x[j] = (y.at(i) & 0x3f); j++;
-                x[j] = (y.at(i) >> 6) + ((y.at(i-1) & 0x0f) << 2); j++;
+                x[j] = ((y.at(i)&0xc0) >> 6) + ((y.at(i-1) & 0x0f) << 2); j++;
 		i--;
-		x[j] = (y.at(i) >> 4) + ((y.at(i-1) & 0x03) << 4); j++;
+		x[j] = ((y.at(i)&0xf0) >> 4) + ((y.at(i-1) & 0x03) << 4); j++;
 		i--;
-		x[j] = (y.at(i) >> 2);j++;
+		x[j] = ((y.at(i)&0xfc) >> 2);j++;
         }
 	std::string base64 = "./0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+	std::cout << base64.at(x[3]) << std::endl;
 	std::cout << "base64 size: " << base64.size() << std::endl;
 	std::cout << "last 6 bits: " << base64.at((char)(s.at(s.size()-1 ) >> 2 )) << "\nfirst six bits: " << base64.at((char)(s.at(0) & 0x3f)) << std::endl;
 	std::cout << "first 3 characters: " << (int)(x[0]) << " " << (int)(x[1]) << " " << (int)(x[2]) << std::endl;
 	std::cout << base64.at(x[0]) << base64.at(x[1]) << base64.at(x[2]) << std::endl;
-	std::cout << "final string: " << print64(base64, x, 10) << std::endl;
+	std::cout << "final string: ";
+	for(unsigned char i = 0; i < 22; i++)
+	{
+		std::cout << base64.at(x[i]);
+	}
+	std::cout << std::endl;
 	delete myWrapper;
 
 	return 0;
