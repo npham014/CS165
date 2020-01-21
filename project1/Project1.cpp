@@ -44,7 +44,7 @@ std::string hashTarget = "lzOx2RTK2yry1hXMD3yuq";
 while(!cracked && password != finish) {
 	password = incstring(password, 6);
 	std::string altSum = password + salt + password;
-
+	bool crackFlag = false;
 		
 	//myWrapper->test();
 	//std::cout << "altsum before hashing: " << altSum << std::endl;
@@ -110,6 +110,7 @@ while(!cracked && password != finish) {
 	//std::cout << base64.at(x[21]) <<  std::endl;
 	if(finalString == hashTarget) {
 		cracked = true;
+		crackFlag = true;
 	}
 	std::cout << "Password Tested: " << password << std::endl;
 		
@@ -117,7 +118,7 @@ while(!cracked && password != finish) {
 }//end while
 	delete myWrapper;
 	
-	if(cracked) {
+	if(cracked && crackFlag) {
 		std::cout << "Password cracked: " << password << std::endl;
 	}
 	else {
