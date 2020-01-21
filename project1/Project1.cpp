@@ -6,20 +6,22 @@
 std::string convertHash(std::string hash, int length);
 std::string appInt(std::string pass, int length);
 std::string print64(std::string base, unsigned char inc[], int incsize);
-
+std::string incstring(std::string x, int mxsz);
+	
 
 int main(int argc, char** argv) {
-	std::string salt = "hfT7jp2q";
+hashwrapper *myWrapper = new md5wrapper();
+std::string salt = "hfT7jp2q";
+bool cracked = false;
+std::string password = "";
+while(!cracked && password != "zzzzzz") {
 
-	std::string password = "zhgnnd"; //For testing hash, this will be replaced with a random password later	
+	//std::string password = "zhgnnd"; //For testing hash, this will be replaced with a random password later	
 
 	std::string altSum = password + salt + password;
-	
-	//TODO: Merge in password generator
 
-	hashwrapper *myWrapper = new md5wrapper();
-	
-	myWrapper->test();
+		
+	//myWrapper->test();
 	std::cout << "altsum before hashing: " << altSum << std::endl;
 	altSum = myWrapper->getHashFromString(altSum);
 	std::cout << "altsum after hashing: ";
@@ -30,9 +32,9 @@ int main(int argc, char** argv) {
 	interm0 += convertHash((altSum), password.length());
 	std::cout << interm0 << std::endl;
 	interm0 += appInt(password, password.length());
-	std::cout << "intermediate0 before hashing: " <<  interm0 << std::endl;
+	//std::cout << "intermediate0 before hashing: " <<  interm0 << std::endl;
 	interm0 = myWrapper->getHashFromString(interm0);
-	std::cout << "intermediate0 after hashing: " << interm0 << std::endl << std::endl;
+	//std::cout << "intermediate0 after hashing: " << interm0 << std::endl << std::endl;
 	std::string intermi;
 	intermi = interm0;
 	for(unsigned long int i = 0; i <= 999; i++) // intermediate1000 loop, incomplete
@@ -48,27 +50,7 @@ int main(int argc, char** argv) {
 	std::cout << "intermediate1000: " << intermi << std::endl;
 	std::string s = convertHash(intermi, 16);
 	std::cout << "s: " << s << "\ns size: " << s.size() <<  std::endl;
-	/*unsigned char x[22];
-	x[0] = s.at(0) & 0x3f;
-	//x[0] = x << 6;
-	unsigned char j = 1;
-     	for(unsigned int i = 0; i < 16; i++)
-	{
-		x[j] += (s.at(i) >> 6) + (s.at(i+1) << 2);
-  	     	//x[j] = x << 6;
-	}*/
 
-	/*unsigned char x[16];
-	for(unsigned char i = 0; i < 16; i++)
-	{
-		x[i] = (s.at(i)) & 0x3f;
-	}*/
-	/*unsigned long int x = s.at(s.size()-1) & 0x3f;
-	x << 6;
-	for(unsigned char i = 15; i >0; i--)
-	{
-		
-	}*/
 	std::string y; y += s.at(11);y += s.at(4); y+= s.at(10); y+= s.at(5);
 	y += s.at(3); y+= s.at(9); y+= s.at(15); y+= s.at(2); y+= s.at(8); y+= s.at(14); y+= s.at(1); y+= s.at(7); y+= s.at(13); y+= s.at(0); y+= s.at(6); y+= s.at(12);
 	unsigned char x[22];
@@ -99,6 +81,11 @@ int main(int argc, char** argv) {
 	}
 	std::cout << std::endl;
 	std::cout << base64.at(x[21]) <<  std::endl;
+
+	std::cout << "Password Tested: " << password << std::endl;
+	password = incstring(password, 6);		
+	
+}//end while
 	delete myWrapper;
 
 	return 0;
@@ -109,14 +96,14 @@ std::string convertHash(std::string hash, int length) {
 	std::string temp;
 	for(int i = 0; i < 32; i+=2 ) {
 		x = std::stoul(hash.substr(i,2), nullptr, 16);
-		std::cout << x << std::endl;
+		//std::cout << x << std::endl;
 		temp.push_back(static_cast<char>(x));
 	}
 	std::string output;
 	for(int j = 0; j < length; j++) {
 		output.push_back(temp.at(j));
 	}
-	std::cout << "convHash output: " << output << std::endl;
+//	std::cout << "convHash output: " << output << std::endl;
 	return output;
 }
 
@@ -137,7 +124,7 @@ std::string appInt(std::string pass, int length) {
 	{
 		output.push_back(std::stoul(temp.substr(i,2), nullptr, 16));
 	}*/
-	std::cout << "appInt output: " << output << std::endl;
+	//std::cout << "appInt output: " << output << std::endl;
 	return output;
 }
 std::string print64(std::string base, unsigned char inc[], int incsize)
@@ -147,3 +134,52 @@ std::string print64(std::string base, unsigned char inc[], int incsize)
 	else  std::cout << base.at(inc[i]);
   }
 }
+std::string incstring(std::string x, int mxsz)
+{
+  std::string s = x;
+  if(mxsz == 0) return s;
+  int i = 0;
+  if(i >= s.size())
+  {
+    s+= "a";
+    return s;
+  }
+  while(s[i] == 'z')
+  {
+    if(i+1 >= mxsz) { return s; }
+    int j = 0;
+    while(j <= i) 
+    { 
+      if(s[j] == 'z')
+      {  s[j] = 'a';}
+      j++;
+    }
+    if(i+1 >= s.size())
+    {s+= "a"; return s;}
+    
+    i++;
+  }
+  s[i] += 1;
+  return s;
+}
+	/*unsigned char x[22];
+	x[0] = s.at(0) & 0x3f;
+	//x[0] = x << 6;
+	unsigned char j = 1;
+     	for(unsigned int i = 0; i < 16; i++)
+	{
+		x[j] += (s.at(i) >> 6) + (s.at(i+1) << 2);
+  	     	//x[j] = x << 6;
+	}*/
+
+	/*unsigned char x[16];
+	for(unsigned char i = 0; i < 16; i++)
+	{
+		x[i] = (s.at(i)) & 0x3f;
+	}*/
+	/*unsigned long int x = s.at(s.size()-1) & 0x3f;
+	x << 6;
+	for(unsigned char i = 15; i >0; i--)
+	{
+		
+	}*/
