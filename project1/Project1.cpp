@@ -83,8 +83,11 @@ int main(int argc, char** argv) {
 		i--;
 		x[j] = ((y.at(i)&0xfc) >> 2);j++;
         }
+	x[20] = (y.at(0) & 0x3f);
+	x[21] = (y.at(0)>>6);
+
+
 	std::string base64 = "./0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-	std::cout << base64.at(x[3]) << std::endl;
 	std::cout << "base64 size: " << base64.size() << std::endl;
 	std::cout << "last 6 bits: " << base64.at((char)(s.at(s.size()-1 ) >> 2 )) << "\nfirst six bits: " << base64.at((char)(s.at(0) & 0x3f)) << std::endl;
 	std::cout << "first 3 characters: " << (int)(x[0]) << " " << (int)(x[1]) << " " << (int)(x[2]) << std::endl;
@@ -95,6 +98,7 @@ int main(int argc, char** argv) {
 		std::cout << base64.at(x[i]);
 	}
 	std::cout << std::endl;
+	std::cout << base64.at(x[21]) <<  std::endl;
 	delete myWrapper;
 
 	return 0;
