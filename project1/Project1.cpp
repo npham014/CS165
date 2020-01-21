@@ -2,20 +2,42 @@
 #include <string>
 #include <sstream>
 #include <iostream>
+#include <thread>
 //note: to compile:  g++ -I../hashlib2plus/trunk/src/ -std=c++11 ../hashlib2plus/trunk/src/hl_md5wrapper.cpp ../hashlib2plus/trunk/src/hl_md5.cpp Project1.cpp
 std::string convertHash(std::string hash, int length);
 std::string appInt(std::string pass, int length);
 std::string print64(std::string base, unsigned char inc[], int incsize);
 std::string incstring(std::string x, int mxsz);
-	
+void hackMainframe(std::string start, std::string finish);	
 
 int main(int argc, char** argv) {
+	
+	std::thread t1(hackMainframe, "", "zzz");
+	std::thread t2(hackMainframe, "aaaa", "zzzz");
+	std::thread t3(hackMainframe, "aaaaa", "zzzzz");
+	std::thread t4(hackMainframe, "aaaaaa", "ffffff");
+	std::thread t5(hackMainframe, "ffffff", "mmmmmm");
+	std::thread t6(hackMainframe, "mmmmmm", "wwwwww");
+	std::thread t7(hackMainframe, "wwwwww", "zzzzzz");
+
+	t1.join();
+	t2.join();
+	t3.join();
+	t4.join();
+	t5.join();
+	t6.join();
+	t7.join();
+
+	return 0;
+}
+
+void hackMainframe(std::string start, std::string finish) {
 hashwrapper *myWrapper = new md5wrapper();
-std::string salt = "hfT7jp2q";
+std::string salt = "4fTgjp6q";
 bool cracked = false;
-std::string password = "";
-std::string hashTarget = "wPwz7GC6xLt9eQZ9eJkaq";
-while(!cracked && password != "zzzzzz") {
+std::string password = start;
+std::string hashTarget = "lzOx2RTK2yry1hXMD3yuq";
+while(!cracked && password != finish) {
 	password = incstring(password, 6);
 	std::string altSum = password + salt + password;
 
@@ -95,9 +117,9 @@ while(!cracked && password != "zzzzzz") {
 		std::cout << "Password cracked: " << password << std::endl;
 	}
 	else {
-		std::cout << "Crack failed\n";
+		std::cout << "Password not found within: " << start << " to " << finish << std::endl;
 	}
-	return 0;
+	return;
 }
 
 std::string convertHash(std::string hash, int length) {
