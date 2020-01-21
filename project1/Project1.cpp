@@ -3,22 +3,26 @@
 #include <sstream>
 #include <iostream>
 #include <thread>
-//note: to compile:  g++ -I../hashlib2plus/trunk/src/ -std=c++11 ../hashlib2plus/trunk/src/hl_md5wrapper.cpp ../hashlib2plus/trunk/src/hl_md5.cpp Project1.cpp
+#include <atomic>
+//note: to compile:  g++ -I../hashlib2plus/trunk/src/ -std=c++11 ../hashlib2plus/trunk/src/hl_md5wrapper.cpp ../hashlib2plus/trunk/src/hl_md5.cpp Project1.cpp -lpthread
 std::string convertHash(std::string hash, int length);
 std::string appInt(std::string pass, int length);
 std::string print64(std::string base, unsigned char inc[], int incsize);
 std::string incstring(std::string x, int mxsz);
 void hackMainframe(std::string start, std::string finish);	
+std::atomic<bool> cracked{false};
 
 int main(int argc, char** argv) {
 	
-	std::thread t1(hackMainframe, "", "zzz");
-	std::thread t2(hackMainframe, "aaaa", "zzzz");
-	std::thread t3(hackMainframe, "aaaaa", "zzzzz");
-	std::thread t4(hackMainframe, "aaaaaa", "ffffff");
-	std::thread t5(hackMainframe, "ffffff", "mmmmmm");
-	std::thread t6(hackMainframe, "mmmmmm", "wwwwww");
-	std::thread t7(hackMainframe, "wwwwww", "zzzzzz");
+	std::thread t1(hackMainframe, "", "zzzzz");
+	std::thread t2(hackMainframe, "aaaaaa", "dddddd");
+	std::thread t3(hackMainframe, "dddddd", "hhhhhh");
+	std::thread t4(hackMainframe, "hhhhhh", "llllll");
+	std::thread t5(hackMainframe, "llllll", "pppppp");
+	std::thread t6(hackMainframe, "pppppp", "tttttt");
+	std::thread t7(hackMainframe, "tttttt", "xxxxxx");
+	std::thread t8(hackMainframe, "xxxxxx", "zzzzzz");
+
 
 	t1.join();
 	t2.join();
@@ -27,14 +31,14 @@ int main(int argc, char** argv) {
 	t5.join();
 	t6.join();
 	t7.join();
-
+	t8.join();
 	return 0;
 }
 
 void hackMainframe(std::string start, std::string finish) {
 hashwrapper *myWrapper = new md5wrapper();
 std::string salt = "4fTgjp6q";
-bool cracked = false;
+//bool cracked = false;
 std::string password = start;
 std::string hashTarget = "lzOx2RTK2yry1hXMD3yuq";
 while(!cracked && password != finish) {
@@ -43,15 +47,15 @@ while(!cracked && password != finish) {
 
 		
 	//myWrapper->test();
-	std::cout << "altsum before hashing: " << altSum << std::endl;
+	//std::cout << "altsum before hashing: " << altSum << std::endl;
 	altSum = myWrapper->getHashFromString(altSum);
-	std::cout << "altsum after hashing: ";
-	std::cout << altSum << std::endl;
+	//std::cout << "altsum after hashing: ";
+	//std::cout << altSum << std::endl;
 		
 
 	std::string interm0 = password + "$1$" + salt;
 	interm0 += convertHash((altSum), password.length());
-	std::cout << interm0 << std::endl;
+	//std::cout << interm0 << std::endl;
 	interm0 += appInt(password, password.length());
 	//std::cout << "intermediate0 before hashing: " <<  interm0 << std::endl;
 	interm0 = myWrapper->getHashFromString(interm0);
@@ -68,9 +72,9 @@ while(!cracked && password != finish) {
 		intermiprehash += (j%2) == 0 ? password : intermi;
 		intermi = myWrapper->getHashFromString(intermiprehash);
 	}
-	std::cout << "intermediate1000: " << intermi << std::endl;
+	//std::cout << "intermediate1000: " << intermi << std::endl;
 	std::string s = convertHash(intermi, 16);
-	std::cout << "s: " << s << "\ns size: " << s.size() <<  std::endl;
+	//std::cout << "s: " << s << "\ns size: " << s.size() <<  std::endl;
 
 	std::string y; y += s.at(11);y += s.at(4); y+= s.at(10); y+= s.at(5);
 	y += s.at(3); y+= s.at(9); y+= s.at(15); y+= s.at(2); y+= s.at(8); y+= s.at(14); y+= s.at(1); y+= s.at(7); y+= s.at(13); y+= s.at(0); y+= s.at(6); y+= s.at(12);
@@ -95,14 +99,14 @@ while(!cracked && password != finish) {
 	//std::cout << "last 6 bits: " << base64.at((char)(s.at(s.size()-1 ) >> 2 )) << "\nfirst six bits: " << base64.at((char)(s.at(0) & 0x3f)) << std::endl;
 	//std::cout << "first 3 characters: " << (int)(x[0]) << " " << (int)(x[1]) << " " << (int)(x[2]) << std::endl;
 	//std::cout << base64.at(x[0]) << base64.at(x[1]) << base64.at(x[2]) << std::endl;
-	std::cout << "final string: ";
+	//std::cout << "final string: ";
 	std::string finalString = "";
 	for(unsigned char i = 0; i < 22; i++)
 	{
 		//std::cout << base64.at(x[i]);
 		finalString += base64.at(x[i]);	
 	}
-	std::cout<< finalString << std::endl;
+	//std::cout<< finalString << std::endl;
 	//std::cout << base64.at(x[21]) <<  std::endl;
 	if(finalString == hashTarget) {
 		cracked = true;
