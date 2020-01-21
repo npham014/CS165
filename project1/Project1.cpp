@@ -39,12 +39,13 @@ void hackMainframe(std::string start, std::string finish) {
 hashwrapper *myWrapper = new md5wrapper();
 std::string salt = "4fTgjp6q";
 //bool cracked = false;
+bool crackFlag = false;
 std::string password = start;
 std::string hashTarget = "lzOx2RTK2yry1hXMD3yuq";
 while(!cracked && password != finish) {
 	password = incstring(password, 6);
 	std::string altSum = password + salt + password;
-	bool crackFlag = false;
+
 		
 	//myWrapper->test();
 	//std::cout << "altsum before hashing: " << altSum << std::endl;
